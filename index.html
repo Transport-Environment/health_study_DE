@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Health study</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+
+<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
+
+
+<style>
+body { margin: 0; padding: 0; }
+#map { 
+  position: absolute; 
+  top: 0; 
+  bottom: 0;
+  width: 100%; 
+  height:80%;
+  z-index:0;
+}
+
+
+h1{
+  z-index: 1;
+  font-family: "Roboto", sans-serif;
+  font-size: 1.5em;
+
+}
+.title{
+  z-index: 2;
+  display: inline-flex;
+  margin-left: 10px;
+}
+
+
+#fly {
+        display: block;
+        position: relative;
+        width:15%;
+        height: 50px;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 1em;
+        text-align: center;
+        color: black;
+        border: 1px solid black;
+        background: #ffffff;
+        font-family: "Roboto", sans-serif;
+        cursor:pointer;
+        display: flex;
+        align-items: center;
+
+
+}
+
+
+#fly:hover {
+  color: white;
+  border: 1px solid white;
+  background: #FF8754;
+  font-family: "Roboto", sans-serif;
+  cursor:pointer;
+
+}
+
+#flytwo {
+        display: block;
+        position: relative;
+        width:15%;
+        height: 50px;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 1em;
+        text-align: center;
+        color: black;
+        border: 1px solid black;
+        background: #ffffff;
+        font-family: "Roboto", sans-serif;
+        margin-left: 20px;
+        cursor:pointer;
+
+}
+
+
+#flytwo:hover {
+  color: white;
+  border: 1px solid white;
+  background: #FF8754;
+  font-family: "Roboto", sans-serif;
+  cursor:pointer;
+
+}
+#locations{
+display: flex;
+width: 100%;
+margin-top: 10px;
+margin-left: 10px;
+
+}
+img{
+  width: 15%;
+  padding-top: 2%;
+  margin-left: 10px;
+
+}
+
+
+#legend{
+  width:15%;
+  height:auto;
+  display: flex;
+  position: relative;
+}
+
+@media only screen and (max-width: 1229px) {
+
+  button#fly{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+}
+
+
+@media only screen and (max-width: 1100px) {
+
+button#fly{
+  width: 40%;
+}
+
+}
+
+@media only screen and (max-width: 750px) {
+  #fly {
+    width:40%;
+    height: 60px;
+
+  }
+
+  #flytwo {
+    width:40%;
+    height: 60px;
+
+  }
+ 
+
+#legend{
+  width:30%;
+  height:auto;
+}
+}
+</style>
+
+</head>
+<body>
+
+<div id='map'></div>
+<div class="title">
+  <h1>Atmest du schädliche Luft aus Flugzeugen ein?</h1>
+</div>
+
+<div id="locations">
+  <button id="fly">Hier klicken, um eine Stadt zu besuchen</button>
+  <button id="flytwo">Ganze Karte</button>
+</div>
+<img id="legend" src="https://raw.githubusercontent.com/Transport-Environment/health_study/main/legend.png">
+
+
+
+
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiY3Jpc3RpbmFwaXRhdGUiLCJhIjoiY2x3a2cyNmJ0MTk4MjJscW16ZXAzMGs2aCJ9.voDgP13qCp6rAGhcxEvFbA';
+
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/cristinapitate/cly32o3lk006t01pf4o25436j',
+    center: [4.9998747,52.7573947],
+    zoom: 1.7
+  });// Función para convertir el radio en metros a píxeles en el mapa
+  var circle = turf.circle([-3.559752, 40.480677], 20, {units: 'kilometers', steps: 64 });
+  var circle10 = turf.circle([-3.559752, 40.480677], 10, {units: 'kilometers', steps: 64 });
+  var circle5 = turf.circle([-3.559752, 40.480677], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_PG = turf.circle([2.5504162, 49.0078721], 20, {units: 'kilometers', steps: 64 });
+  var circle10_PG = turf.circle([2.5504162, 49.0078721], 10, {units: 'kilometers', steps: 64 });
+  var circle5_PG = turf.circle([2.5504162, 49.0078721], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_PO = turf.circle([2.3614817, 48.7276601], 20, {units: 'kilometers', steps: 64 });
+  var circle10_PO = turf.circle([2.3614817, 48.7276601], 10, {units: 'kilometers', steps: 64 });
+  var circle5_PO = turf.circle([2.3614817, 48.7276601], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_LH = turf.circle([-0.4563254, 51.4707487], 20, {units: 'kilometers', steps: 64 });
+  var circle10_LH = turf.circle([-0.4563254, 51.4707487], 10, {units: 'kilometers', steps: 64 });
+  var circle5_LH = turf.circle([-0.4563254, 51.4707487], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_B = turf.circle([4.4854301, 50.9006291], 20, {units: 'kilometers', steps: 64 });
+  var circle10_B = turf.circle([4.4854301, 50.9006291], 10, {units: 'kilometers', steps: 64 });
+  var circle5_B = turf.circle([4.4854301, 50.9006291], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_G = turf.circle([6.1065139, 46.2369794], 20, {units: 'kilometers', steps: 64 });
+  var circle10_G = turf.circle([6.1065139, 46.2369794], 10, {units: 'kilometers', steps: 64 });
+  var circle5_G = turf.circle([6.1065139, 46.2369794], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_F = turf.circle([8.5615099, 50.0378006], 20, {units: 'kilometers', steps: 64 });
+  var circle10_F = turf.circle([8.5615099, 50.0378006], 10, {units: 'kilometers', steps: 64 });
+  var circle5_F = turf.circle([8.5615099, 50.0378006], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_L = turf.circle([-9.1350871, 38.7798183], 20, {units: 'kilometers', steps: 64 });
+  var circle10_L = turf.circle([-9.1350871, 38.7798183], 10, {units: 'kilometers', steps: 64 });
+  var circle5_L = turf.circle([-9.1350871, 38.7798183], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_AM = turf.circle([4.747984, 52.3157299], 20, {units: 'kilometers', steps: 64 });
+  var circle10_AM = turf.circle([4.747984, 52.3157299], 10, {units: 'kilometers', steps: 64 });
+  var circle5_AM = turf.circle([4.747984, 52.3157299], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_OS = turf.circle([11.0960723, 60.1977031], 20, {units: 'kilometers', steps: 64 });
+  var circle10_OS = turf.circle([11.0960723, 60.1977031], 10, {units: 'kilometers', steps: 64 });
+  var circle5_OS = turf.circle([11.0960723, 60.1977031], 5, {units: 'kilometers', steps: 64 });
+
+
+  var circle_ST = turf.circle([17.9390084, 59.6485434], 20, {units: 'kilometers', steps: 64 });
+  var circle10_ST = turf.circle([17.9390084, 59.6485434], 10, {units: 'kilometers', steps: 64 });
+  var circle5_ST = turf.circle([17.9390084, 59.6485434], 5, {units: 'kilometers', steps: 64 });
+
+
+  var circle_LS = turf.circle([0.240464, 51.8863903], 20, {units: 'kilometers', steps: 64 });
+  var circle10_LS = turf.circle([0.240464, 51.8863903], 10, {units: 'kilometers', steps: 64 });
+  var circle5_LS = turf.circle([0.240464, 51.8863903], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_MN = turf.circle([11.7830575, 48.3536688], 20, {units: 'kilometers', steps: 64 });
+  var circle10_MN = turf.circle([11.7830575, 48.3536688], 10, {units: 'kilometers', steps: 64 });
+  var circle5_MN = turf.circle([11.7830575, 48.3536688], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_PM = turf.circle([2.7394919, 39.5524926], 20, {units: 'kilometers', steps: 64 });
+  var circle10_PM = turf.circle([2.7394919, 39.5524926], 10, {units: 'kilometers', steps: 64 });
+  var circle5_PM = turf.circle([2.7394919, 39.5524926], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_LG = turf.circle([-0.1820722, 51.1536432], 20, {units: 'kilometers', steps: 64 });
+  var circle10_LG = turf.circle([-0.1820722, 51.1536432], 10, {units: 'kilometers', steps: 64 });
+  var circle5_LG = turf.circle([-0.1820722, 51.1536432], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_R = turf.circle([12.258842, 41.802539], 20, {units: 'kilometers', steps: 64 });
+  var circle10_R = turf.circle([12.258842, 41.802539], 10, {units: 'kilometers', steps: 64 });
+  var circle5_R = turf.circle([12.258842, 41.802539], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_NC = turf.circle([7.2140801, 43.6600712], 20, {units: 'kilometers', steps: 64 });
+  var circle10_NC = turf.circle([7.2140801, 43.6600712], 10, {units: 'kilometers', steps: 64 });
+  var circle5_NC = turf.circle([7.2140801, 43.6600712], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_MA = turf.circle([-4.4941718, 36.6792917], 20, {units: 'kilometers', steps: 64 });
+  var circle10_MA = turf.circle([-4.4941718, 36.6792917], 10, {units: 'kilometers', steps: 64 });
+  var circle5_MA = turf.circle([-4.4941718, 36.6792917], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_MM = turf.circle([8.7262332, 45.628225], 20, {units: 'kilometers', steps: 64 });
+  var circle10_MM = turf.circle([8.7262332, 45.628225], 10, {units: 'kilometers', steps: 64 });
+  var circle5_MM = turf.circle([8.7262332, 45.628225], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_V = turf.circle([16.568937, 48.117572], 20, {units: 'kilometers', steps: 64 });
+  var circle10_V = turf.circle([16.568937, 48.117572], 10, {units: 'kilometers', steps: 64 });
+  var circle5_V = turf.circle([16.568937, 48.117572], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_CK = turf.circle([12.6524792, 55.6192066], 20, {units: 'kilometers', steps: 64 });
+  var circle10_CK = turf.circle([12.6524792, 55.6192066], 10, {units: 'kilometers', steps: 64 });
+  var circle5_CK = turf.circle([12.6524792, 55.6192066], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_H = turf.circle([24.9489605, 60.3181802], 20, {units: 'kilometers', steps: 64 });
+  var circle10_H = turf.circle([24.9489605, 60.3181802], 10, {units: 'kilometers', steps: 64 });
+  var circle5_H = turf.circle([24.9489605, 60.3181802], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_D = turf.circle([-6.251456, 53.427641], 20, {units: 'kilometers', steps: 64 });
+  var circle10_D = turf.circle([-6.251456, 53.427641], 10, {units: 'kilometers', steps: 64 });
+  var circle5_D = turf.circle([-6.251456,53.427641], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_Z = turf.circle([8.55649, 47.4598], 20, {units: 'kilometers', steps: 64 });
+  var circle10_Z = turf.circle([8.55649, 47.4598], 10, {units: 'kilometers', steps: 64 });
+  var circle5_Z = turf.circle([8.55649, 47.4598], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_P = turf.circle([14.270049, 50.102739], 20, {units: 'kilometers', steps: 64 });
+  var circle10_P = turf.circle([14.270049, 50.102739], 10, {units: 'kilometers', steps: 64 });
+  var circle5_P = turf.circle([14.270049, 50.102739], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_AT = turf.circle([23.9479302, 37.9362683], 20, {units: 'kilometers', steps: 64 });
+  var circle10_AT = turf.circle([23.9479302, 37.9362683], 10, {units: 'kilometers', steps: 64 });
+  var circle5_AT = turf.circle([23.9479302, 37.9362683], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_MC = turf.circle([-2.273029, 53.359871], 20, {units: 'kilometers', steps: 64 });
+  var circle10_MC = turf.circle([-2.273029, 53.359871], 10, {units: 'kilometers', steps: 64 });
+  var circle5_MC = turf.circle([-2.273029, 53.359871], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_K = turf.circle([7.1397843, 50.8668438], 20, {units: 'kilometers', steps: 64 });
+  var circle10_K = turf.circle([7.1397843, 50.8668438], 10, {units: 'kilometers', steps: 64 });
+  var circle5_K = turf.circle([7.1397843, 50.8668438], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_HA = turf.circle([9.998313, 53.630181], 20, {units: 'kilometers', steps: 64 });
+  var circle10_HA = turf.circle([9.998313, 53.630181], 10, {units: 'kilometers', steps: 64 });
+  var circle5_HA = turf.circle([9.998313, 53.630181], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_DU = turf.circle([6.767198, 51.287101], 20, {units: 'kilometers', steps: 64 });
+  var circle10_DU = turf.circle([6.767198, 51.287101], 10, {units: 'kilometers', steps: 64 });
+  var circle5_DU = turf.circle([6.767198, 51.287101], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_W = turf.circle([20.971268,52.166264], 20, {units: 'kilometers', steps: 64 });
+  var circle10_W = turf.circle([20.971268, 52.166264], 10, {units: 'kilometers', steps: 64 });
+  var circle5_W = turf.circle([20.971268, 52.166264], 5, {units: 'kilometers', steps: 64 });
+
+  var circle_BA = turf.circle([2.084083,41.297126], 20, {units: 'kilometers', steps: 64 });
+  var circle10_BA = turf.circle([2.084083, 41.297126], 10, {units: 'kilometers', steps: 64 });
+  var circle5_BA = turf.circle([2.084083, 41.297126], 5, {units: 'kilometers', steps: 64 });
+
+  map.on('load', function () {
+
+    //madrid
+  map.addLayer({
+    id: 'circle',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  map.addLayer({
+    id: 'circle10',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  map.addLayer({
+    id: 'circle5',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //paris charles de gaulle
+  map.addLayer({
+    id: 'circle_PG',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_PG
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  map.addLayer({
+    id: 'circle10_PG',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_PG
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  map.addLayer({
+    id: 'circle5_PG',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_PG
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //paris orly
+  map.addLayer({
+    id: 'circle_PO',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_PO
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_PO',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_PO
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_PO',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_PO
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //london heathrow
+  map.addLayer({
+    id: 'circle_LH',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_LH
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_LH',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_LH
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_LH',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_LH
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Brussels
+  map.addLayer({
+    id: 'circle_B',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_B
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_B',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_B
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_B',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_B
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Geneva
+  map.addLayer({
+    id: 'circle_G',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_G
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_G',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_G
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_G',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_G
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Frankfurt
+  map.addLayer({
+    id: 'circle_F',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_F
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_F',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_F
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_F',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_F
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Lisbon
+  map.addLayer({
+    id: 'circle_L',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_L
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_L',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_L
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_L',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_L
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Amsterdam
+  map.addLayer({
+    id: 'circle_AM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_AM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_AM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_AM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_AM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_AM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Oslo
+  map.addLayer({
+    id: 'circle_OS',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_OS
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_OS',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_OS
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_OS',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_OS
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Stockholm
+  map.addLayer({
+    id: 'circle_ST',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_ST
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_ST',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_ST
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_ST',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_ST
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //London Standsted
+  map.addLayer({
+    id: 'circle_LS',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_LS
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_LS',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_LS
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_LS',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_LS
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //London Standsted
+  map.addLayer({
+    id: 'circle_MN',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_MN
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_MN',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_MN
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_MN',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_MN
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Palma
+  map.addLayer({
+    id: 'circle_PM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_PM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_PM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_PM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_PM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_PM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //London Gatwick
+  map.addLayer({
+    id: 'circle_LG',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_LG
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_LG',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_LG
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_LG',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_LG
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Rome
+  map.addLayer({
+    id: 'circle_R',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_R
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_R',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_R
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_R',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_R
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Nice
+  map.addLayer({
+    id: 'circle_NC',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_NC
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_NC',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_NC
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_NC',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_NC
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Malaga
+  map.addLayer({
+    id: 'circle_MA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_MA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_MA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_MA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_MA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_MA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Milan malpensa
+  map.addLayer({
+    id: 'circle_MM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_MM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_MM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_MM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_MM',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_MM
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Vienna
+  map.addLayer({
+    id: 'circle_V',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_V
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_V',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_V
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_V',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_V
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Copenhagen Kastrup
+  map.addLayer({
+    id: 'circle_CK',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_CK
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_CK',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_CK
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_CK',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_CK
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Helsinki
+  map.addLayer({
+    id: 'circle_H',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_H
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_H',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_H
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_H',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_H
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Dublin
+  map.addLayer({
+    id: 'circle_D',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_D
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_D',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_D
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_D',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_D
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Zurich
+  map.addLayer({
+    id: 'circle_Z',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_Z
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_Z',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_Z
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_Z',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_Z
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Prague
+  map.addLayer({
+    id: 'circle_P',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_P
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_P',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_P
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_P',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_P
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Athens
+  map.addLayer({
+    id: 'circle_AT',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_AT
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_AT',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_AT
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_AT',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_AT
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Manchester
+  map.addLayer({
+    id: 'circle_MC',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_MC
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_MC',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_MC
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_MC',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_MC
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Koln
+  map.addLayer({
+    id: 'circle_K',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_K
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_K',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_K
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_K',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_K
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Hamburg
+  map.addLayer({
+    id: 'circle_HA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_HA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_HA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_HA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_HA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_HA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Dusseldorf
+  map.addLayer({
+    id: 'circle_DU',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_DU
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_DU',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_DU
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_DU',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_DU
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+
+  //Warschaw
+  map.addLayer({
+    id: 'circle_W',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_W
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_W',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_W
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_W',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_W
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+
+  //Barcelona
+  map.addLayer({
+    id: 'circle_BA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle_BA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle10_BA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle10_BA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+  map.addLayer({
+    id: 'circle5_BA',
+    type: 'line',
+    source: {
+      type: 'geojson',
+      data: circle5_BA
+    },
+    layout: {},
+    paint: {
+      'line-color': '#FF8754',
+      'line-width': 2
+    }
+  });
+});
+
+
+const locations = [
+    [2.5504162, 49.0078721], // París
+    [4.4854301, 50.9006291],  // Bruselas
+    [6.1065139, 46.2369794], // Ginebra
+    [-0.4563254, 51.4707487],  // Londres
+    [-9.1350871, 38.7798183], // Lisboa
+    [8.5615099, 50.0378006], // Frankfurt
+    [4.747984, 52.3157299], // Ámsterdam
+    [-3.559752, 40.480677],  // Madrid
+    [2.3614817, 48.7276601],
+    [11.0960723, 60.1977031],
+    [17.9390084, 59.6485434],
+    [0.240464, 51.8863903],
+    [11.7830575, 48.3536688],
+    [2.7394919, 39.5524926],
+    [-0.1820722, 51.1536432],
+    [12.258842, 41.802539],
+    [7.2140801, 43.6600712],
+    [-4.4941718, 36.6792917],
+    [8.7262332, 45.628225],
+    [16.568937, 48.117572],
+    [12.6524792, 55.6192066],
+    [24.9489605, 60.3181802],
+    [-6.251456, 53.427641],
+    [8.55649, 47.4598],
+    [14.270049, 50.102739],
+    [23.9479302, 37.9362683],
+    [-2.273029, 53.359871],
+    [7.1397843, 50.8668438],
+    [9.998313, 53.630181],
+    [6.767198, 51.287101],
+    [20.971268,52.166264],
+    [2.084083,41.297126],
+
+];
+
+// Índice inicial
+let currentIndex = 0;
+const initialPosition = [4.9998747,52.7573947];
+
+document.getElementById('fly').addEventListener('click', () => {
+    // Selecciona la ubicación actual del array
+    const currentLocation = locations[currentIndex];
+    
+    // Cambia a la ubicación seleccionada
+    map.flyTo({
+        center: currentLocation,
+        zoom: 9,
+        essential: true // esta animación se considera esencial con respecto a prefers-reduced-motion
+    });
+
+    // Incrementa el índice
+    currentIndex++;
+
+    // Resetea el índice si llega al final del array
+    if (currentIndex >= locations.length) {
+        currentIndex = 0;
+    }
+});
+
+
+document.getElementById('flytwo').addEventListener('click', () => {
+    // Vuelve a la posición inicial
+    map.flyTo({
+        center: initialPosition,
+        zoom: 3,
+        essential: true // esta animación se considera esencial con respecto a prefers-reduced-motion
+    });
+});
+    map.addControl(new mapboxgl.NavigationControl());
+
+</script>
+
+</body>
+</html>
