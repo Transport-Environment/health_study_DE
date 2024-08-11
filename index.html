@@ -1643,14 +1643,14 @@ button#fly{
 
 
 const locations = [
-    [2.5504162, 49.0078721], // París
-    [4.4854301, 50.9006291],  // Bruselas
-    [6.1065139, 46.2369794], // Ginebra
-    [-0.4563254, 51.4707487],  // Londres
-    [-9.1350871, 38.7798183], // Lisboa
-    [8.5615099, 50.0378006], // Frankfurt
-    [4.747984, 52.3157299], // Ámsterdam
-    [-3.559752, 40.480677],  // Madrid
+    [2.5504162, 49.0078721], 
+    [4.4854301, 50.9006291],  
+    [6.1065139, 46.2369794], 
+    [-0.4563254, 51.4707487],  
+    [-9.1350871, 38.7798183], 
+    [8.5615099, 50.0378006], 
+    [4.747984, 52.3157299], 
+    [-3.559752, 40.480677],  
     [2.3614817, 48.7276601],
     [11.0960723, 60.1977031],
     [17.9390084, 59.6485434],
@@ -1678,25 +1678,20 @@ const locations = [
 
 ];
 
-// Índice inicial
 let currentIndex = 0;
 const initialPosition = [4.9998747,52.7573947];
 
 document.getElementById('fly').addEventListener('click', () => {
-    // Selecciona la ubicación actual del array
     const currentLocation = locations[currentIndex];
     
-    // Cambia a la ubicación seleccionada
     map.flyTo({
         center: currentLocation,
         zoom: 9,
-        essential: true // esta animación se considera esencial con respecto a prefers-reduced-motion
+        essential: true 
     });
 
-    // Incrementa el índice
     currentIndex++;
 
-    // Resetea el índice si llega al final del array
     if (currentIndex >= locations.length) {
         currentIndex = 0;
     }
@@ -1708,7 +1703,7 @@ document.getElementById('flytwo').addEventListener('click', () => {
     map.flyTo({
         center: initialPosition,
         zoom: 3,
-        essential: true // esta animación se considera esencial con respecto a prefers-reduced-motion
+        essential: true 
     });
 });
     map.addControl(new mapboxgl.NavigationControl());
